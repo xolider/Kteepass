@@ -1,25 +1,26 @@
 import java.util.Properties
 
 plugins {
-    kotlin("jvm") version "1.9.23"
-    id("org.jetbrains.dokka") version "1.9.20"
-    id("java-library")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.dokka)
+    id("maven-publish")
 }
 
-group = "dev.vicart"
-version = "1.0-SNAPSHOT"
+group = "dev.vicart.keepasskt"
+version = "1.0.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
 kotlin {
-    jvmToolchain(21)
+    jvm {
+        jvmToolchain(21)
+    }
+
+    sourceSets {
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+    }
+}
+
+tasks.withType<Test>() {
+    useJUnitPlatform()
 }
