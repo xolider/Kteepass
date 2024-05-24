@@ -1,0 +1,18 @@
+[versions]
+kotlin = "2.0.0"
+dokka = "1.9.20"
+androidGradlePlugin = "8.2.0"
+androidCompileSdk = "34"
+androidTargetSdk = "34"
+androidMinSdk = "29"
+bouncycastle = "1.78.1"
+
+[libraries]
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+bouncycastle = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+androidLibrary = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }

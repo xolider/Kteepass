@@ -1,25 +1,57 @@
 import java.util.Properties
 
 plugins {
-    kotlin("jvm") version "1.9.23"
-    id("org.jetbrains.dokka") version "1.9.20"
-    id("java-library")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.androidLibrary)
+    id("maven-publish")
 }
 
-group = "dev.vicart"
-version = "1.0-SNAPSHOT"
+group = "dev.vicart.kteepass"
+version = "1.0.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
 kotlin {
     jvmToolchain(21)
+    jvm()
+    androidTarget {
+        publishLibraryVariants("release")
+    }
+
+    sourceSets {
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+        commonMain.dependencies {
+            implementation(libs.bouncycastle)
+        }
+    }
+}
+
+android {
+    compileSdk = libs.versions.androidCompileSdk.get().toInt()
+    namespace = "dev.vicart.kteepass"
+
+    defaultConfig {
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            val snapshotUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots"
+            val releaseUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            url = uri(if(version.toString().endsWith("-SNAPSHOT")) snapshotUrl else releaseUrl)
+            credentials {
+                val properties = Properties()
+                properties.load(project.rootProject.file("local.properties").inputStream())
+                username = properties.getProperty("maven.username")
+                password = properties.getProperty("maven.password")
+            }
+        }
+    }
 }
