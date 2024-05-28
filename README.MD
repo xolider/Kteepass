@@ -29,10 +29,39 @@ Currently, it only supports Java/JVM and Android. More platforms will be added o
 
 ## Setting up the library in your project
 
-/
+Depending on your project's structure and targets, you may need different dependencies to implement the Kteepass library. 
+Kteepass follows the KMP naming convention for artifacts (e.g: kteepass-jvm for the JVM target).
+
+### Kotlin Multiplatform Project
+
+when working with KMP, you can directly include the base artifact in your `commonMain` source set. KMP will resolve itself 
+the right dependencies to use for each of your targets:
+
+```kotlin
+commonMain.dependencies {
+    implementation("dev.vicart.kteepass:kteepass:<version>")
+}
+```
+
+### Java/Kotlin (JVM)
+
+```kotlin
+dependencies {
+    implementation("dev.vicart.kteepass:kteepass-jvm:<version>")
+}
+```
+
+### Android
+
+```kotlin
+dependencies {
+    implementation("dev.vicart.kteepass:kteepass-android:<version>")
+}
+```
 
 ## How to use
 /
 
 ## Contributing
-/
+
+Please read out [contributing guide](https://github.com/xolider/Kteepass/blob/main/CONTRIBUTING.MD)
