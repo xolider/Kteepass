@@ -1,7 +1,5 @@
-on:
-  pull_request:
-    types:
-      - synchronize
+on: { pull_request: }
+name: Build & Tests
 
 jobs:
   build:
@@ -18,5 +16,5 @@ jobs:
           java-version: '21'
       - run: chmod +x ./gradlew
         name: 'Make ./gradlew executable'
-      - run: ./gradlew --no-daemon publishToMavenLocal
+      - run: ./gradlew --no-daemon publishToMavenLocal -D"maven.user=${{ secrets.MAVEN_USER }}" -D"maven.password=${{ secrets.MAVEN_PASSWORD }}"
         name: Build libraries

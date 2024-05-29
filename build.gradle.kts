@@ -18,10 +18,23 @@ kotlin {
     }
 
     sourceSets {
+        val commonMain by getting
+
+        val commonJvmMain by creating {
+            dependsOn(commonMain)
+        }
+
+        val androidMain by getting {
+            dependsOn(commonJvmMain)
+        }
+        val jvmMain by getting {
+            dependsOn(commonJvmMain)
+        }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        commonMain.dependencies {
+        commonJvmMain.dependencies {
             implementation(libs.bouncycastle)
         }
     }
@@ -47,10 +60,8 @@ publishing {
             val releaseUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             url = uri(if(version.toString().endsWith("-SNAPSHOT")) snapshotUrl else releaseUrl)
             credentials {
-                val properties = Properties()
-                properties.load(project.rootProject.file("local.properties").inputStream())
-                username = properties.getProperty("maven.username")
-                password = properties.getProperty("maven.password")
+                username = findProperty("maven.user")?.toString()
+                password = findProperty("maven.password")?.toString()
             }
         }
     }

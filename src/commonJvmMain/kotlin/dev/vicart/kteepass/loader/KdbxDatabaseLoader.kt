@@ -73,7 +73,8 @@ class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderH
         if(header.version.minor > KteepassConstants.MINOR_SUPPORTED_KDBX) {
             warnings.add(LoadingWarning.HEADER_MINOR_VERSION_NOT_SUPPORTED)
         }
-        if(!(header.fields[HeaderConstants.HEADER_FIELD_ID_END] as ByteArray).contentEquals(HeaderConstants.headerEndValue)) {
+        if(!(header.fields[HeaderConstants.HEADER_FIELD_ID_END] as ByteArray).contentEquals(
+                HeaderConstants.headerEndValue)) {
             throw WrongHeaderEndException()
         }
         arrayOf(HeaderConstants.HEADER_FIELD_ID_KDF, HeaderConstants.HEADER_FIELD_ID_PUBLIC_CUSTOM_DATA).forEach {
