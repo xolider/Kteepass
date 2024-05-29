@@ -1,0 +1,50 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: xolider/Kteepass/.github/workflows/build-test.yml@main
+  deploy:
+    runs-on: 'ubuntu-latest'
+    name: 'Deploy to Maven Central'
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - run: chmod +x ./gradlew
+        name: 'Make ./gradlew executable'
+      - run: ./gradlew --no-daemon -D"maven.user=${{ secrets.MAVEN_USER }}" -D"maven.password=${{ secrets.MAVEN_PASSWORD }}" publish
+  documentation:
+    name: 'Publish documentation'
+    runs-on: 'ubuntu-latest'
+    needs:
+      - build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - run: chmod +x ./gradlew
+        name: 'Make ./gradlew executable'
+      - run: ./gradlew --no-daemon dokkaHtml
+        name: 'Generate HTML documentation'
+      - uses: actions/upload-pages-artifact@v3.0.1
+        name: 'Upload documentation artifact'
+        with:
+          path: 'build/dokka/html'
+      - uses: actions/deploy-pages@v4
+        name: 'Deploy documentation'
+        id: deployment

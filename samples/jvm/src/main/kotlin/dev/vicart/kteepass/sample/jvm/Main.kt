@@ -5,7 +5,6 @@ import dev.vicart.kteepass.loader.KdbxDatabaseLoader
 import java.io.File
 
 fun main() {
-    val database = KdbxDatabaseLoader.from(File("/home/clement/Documents/Database.kdbx")).load().database
-
-    database.unlock(PasswordKey("test"))
+    val database = KdbxDatabaseLoader.from(File("/home/clement/Documents/Database.kdbx"))
+        .open(PasswordKey("test"))
 }

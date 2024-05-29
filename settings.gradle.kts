@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 }
 
 include("samples:jvm")
+include("samples:android")

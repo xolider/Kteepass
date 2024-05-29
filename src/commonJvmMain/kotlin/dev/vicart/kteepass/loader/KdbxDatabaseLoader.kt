@@ -2,6 +2,8 @@ package dev.vicart.kteepass.loader
 
 import dev.vicart.kteepass.constant.HeaderConstants
 import dev.vicart.kteepass.constant.KteepassConstants
+import dev.vicart.kteepass.crypto.IKey
+import dev.vicart.kteepass.crypto.decrypt.DatabaseDecrypter
 import dev.vicart.kteepass.exception.*
 import dev.vicart.kteepass.loader.helper.DatabaseLoaderHelper
 import dev.vicart.kteepass.loader.helper.URILoaderHelper
@@ -16,7 +18,7 @@ import java.io.InputStream
 import java.net.URI
 import java.security.MessageDigest
 
-class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderHelper) {
+class KdbxDatabaseLoader private constructor(private val bytes: ByteArray) {
 
     private val warnings = mutableListOf<LoadingWarning>()
 
@@ -27,8 +29,7 @@ class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderH
             val bytes = from.use {
                 it.readBytes()
             }
-            val helper = DatabaseLoaderHelper(bytes)
-            return KdbxDatabaseLoader(helper)
+            return KdbxDatabaseLoader(bytes)
         }
 
         fun from(from: URI): KdbxDatabaseLoader = from(URILoaderHelper.loadFrom(from))
@@ -36,30 +37,14 @@ class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderH
         fun from(provider: KdbxFileProvider): KdbxDatabaseLoader = from(provider.get())
     }
 
-    fun load(): KdbxLoadingResult {
-        val header = KdbxHeader(
-            helper.headerFirstSignature,
-            helper.headerSecondSignature,
-            KdbxVersion(
-                helper.formatVersion.toDecimalInt(offset = 16),
-                helper.formatVersion.toDecimalInt()
-            ),
-            helper.fields,
-            helper.headerHash,
-            helper.headerHmacHash,
-            helper.headerBytes
-        )
+    fun open(key: IKey) : KdbxDatabase {
+        val helper = DatabaseLoaderHelper(bytes)
+        val header = KdbxHeader(helper)
 
         checkHeader(header)
 
-        val database = KdbxDatabase(
-            header
-        )
-
-        return KdbxLoadingResult(
-            database,
-            warnings
-        )
+        val decrypter = DatabaseDecrypter(header, helper.blocks, key)
+        return decrypter.getDecryptedDatabase()
     }
 
     private fun checkHeader(header: KdbxHeader) {
@@ -73,24 +58,11 @@ class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderH
         if(header.version.minor > KteepassConstants.MINOR_SUPPORTED_KDBX) {
             warnings.add(LoadingWarning.HEADER_MINOR_VERSION_NOT_SUPPORTED)
         }
-        if(!(header.fields[HeaderConstants.HEADER_FIELD_ID_END] as ByteArray).contentEquals(HeaderConstants.headerEndValue)) {
+        if(!header.endHeader.contentEquals(HeaderConstants.headerEndValue)) {
             throw WrongHeaderEndException()
         }
-        arrayOf(HeaderConstants.HEADER_FIELD_ID_KDF, HeaderConstants.HEADER_FIELD_ID_PUBLIC_CUSTOM_DATA).forEach {
-            val dictionary = header.fields[it] as VariantDictionary?
-            dictionary?.let {
-                val majorVersion = it.version.toInt().toDecimalInt(size = 16, offset = 8)
-                val minorVersion = it.version.toInt().toDecimalInt(size = 16)
-                if(majorVersion > KteepassConstants.MAJOR_SUPPORTED_VARIANT_DICTIONARY) {
-                    throw VariantDictionaryVersionNotSupportedException()
-                }
-                if(minorVersion > KteepassConstants.MINOR_SUPPORTED_VARIANT_DICTIONARY) {
-                    warnings.add(LoadingWarning.VARIANT_DIRECTORY_MINOR_VERSION_NOT_SUPPORTED)
-                }
-            }
-        }
-        val computedHeaderHash = MessageDigest.getInstance("SHA-256").digest(helper.headerBytes)
-        if(!computedHeaderHash.contentEquals(header.hash)) {
+        val computedHeaderHash = MessageDigest.getInstance("SHA-256").digest(header.headerBytes)
+        if(!computedHeaderHash.contentEquals(header.sha256Hash)) {
             throw DatabaseCorruptedException()
         }
     }
