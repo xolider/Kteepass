@@ -1,7 +1,4 @@
-on:
-  pull_request:
-    types:
-      - synchronize
+on: { pull_request: }
 
 jobs:
   build:
