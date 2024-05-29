@@ -15,5 +15,5 @@ jobs:
           java-version: '21'
       - run: chmod +x ./gradlew
         name: 'Make ./gradlew executable'
-      - run: ./gradlew --no-daemon publishToMavenLocal -Dmaven.user=${{ secrets.MAVEN_USER }} -Dmaven.password=${{ secrets.MAVEN_PASSWORD }}
+      - run: ./gradlew --no-daemon publishToMavenLocal -D"maven.user=${{ secrets.MAVEN_USER }}" -D"maven.password=${{ secrets.MAVEN_PASSWORD }}"
         name: Build libraries
