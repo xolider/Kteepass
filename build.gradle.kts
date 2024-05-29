@@ -18,10 +18,23 @@ kotlin {
     }
 
     sourceSets {
+        val commonMain by getting
+
+        val commonJvmMain by creating {
+            dependsOn(commonMain)
+        }
+
+        val androidMain by getting {
+            dependsOn(commonJvmMain)
+        }
+        val jvmMain by getting {
+            dependsOn(commonJvmMain)
+        }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        commonMain.dependencies {
+        commonJvmMain.dependencies {
             implementation(libs.bouncycastle)
         }
     }

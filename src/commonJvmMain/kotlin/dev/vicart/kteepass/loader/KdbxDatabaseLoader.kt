@@ -63,8 +63,8 @@ class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderH
     }
 
     private fun checkHeader(header: KdbxHeader) {
-        if(header.firstSignature != HeaderConstants.HEADER_FIRST_SIGNATURE.toUInt()||
-            header.secondSignature != HeaderConstants.HEADER_SECOND_SIGNATURE.toUInt()) {
+        if(header.firstSignature != dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIRST_SIGNATURE.toUInt()||
+            header.secondSignature != dev.vicart.kteepass.constant.HeaderConstants.HEADER_SECOND_SIGNATURE.toUInt()) {
             throw HeaderSignatureNotMatch()
         }
         if(header.version.major > KteepassConstants.MAJOR_SUPPORTED_KDBX) {
@@ -73,10 +73,11 @@ class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderH
         if(header.version.minor > KteepassConstants.MINOR_SUPPORTED_KDBX) {
             warnings.add(LoadingWarning.HEADER_MINOR_VERSION_NOT_SUPPORTED)
         }
-        if(!(header.fields[HeaderConstants.HEADER_FIELD_ID_END] as ByteArray).contentEquals(HeaderConstants.headerEndValue)) {
+        if(!(header.fields[dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_END] as ByteArray).contentEquals(
+                dev.vicart.kteepass.constant.HeaderConstants.headerEndValue)) {
             throw WrongHeaderEndException()
         }
-        arrayOf(HeaderConstants.HEADER_FIELD_ID_KDF, HeaderConstants.HEADER_FIELD_ID_PUBLIC_CUSTOM_DATA).forEach {
+        arrayOf(dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_KDF, dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_PUBLIC_CUSTOM_DATA).forEach {
             val dictionary = header.fields[it] as VariantDictionary?
             dictionary?.let {
                 val majorVersion = it.version.toInt().toDecimalInt(size = 16, offset = 8)

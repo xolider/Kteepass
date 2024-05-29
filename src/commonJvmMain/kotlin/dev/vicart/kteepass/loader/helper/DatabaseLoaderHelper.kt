@@ -39,25 +39,25 @@ class DatabaseLoaderHelper(bytes: ByteArray) {
         val content = ByteArray(size)
         buffer.get(content, 0, content.size)
         return when(byteId) {
-            HeaderConstants.HEADER_FIELD_ID_ENCRYPTION_ALGORITHM -> { //Encryption algorithm
+            dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_ENCRYPTION_ALGORITHM -> { //Encryption algorithm
                 UUID.nameUUIDFromBytes(content)
             }
-            HeaderConstants.HEADER_FIELD_ID_END -> { //End of header fields
+            dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_END -> { //End of header fields
                 content
             }
-            HeaderConstants.HEADER_FIELD_ID_COMPRESSION_ALGORITHM -> { //Compression algorithm (1 = GZip)
+            dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_COMPRESSION_ALGORITHM -> { //Compression algorithm (1 = GZip)
                 content.toUint().toInt()
             }
-            HeaderConstants.HEADER_FIELD_ID_MASTER_SEED -> { //Master salt/seed
+            dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_MASTER_SEED -> { //Master salt/seed
                 content
             }
-            HeaderConstants.HEADER_FIELD_ID_ENCRYPTION_NONCE -> { //Nonce of encryption algorithm (variable size)
+            dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_ENCRYPTION_NONCE -> { //Nonce of encryption algorithm (variable size)
                 content
             }
-            HeaderConstants.HEADER_FIELD_ID_KDF -> { //KDF
+            dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_KDF -> { //KDF
                 VariantDictionary.fromContent(content)
             }
-            HeaderConstants.HEADER_FIELD_ID_PUBLIC_CUSTOM_DATA -> { //Custom data
+            dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_PUBLIC_CUSTOM_DATA -> { //Custom data
                 VariantDictionary.fromContent(content)
             }
             else -> throw UnknownHeaderFieldIDException(byteId)

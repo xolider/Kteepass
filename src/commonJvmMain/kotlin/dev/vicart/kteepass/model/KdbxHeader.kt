@@ -20,7 +20,7 @@ data class KdbxHeader(
     val bytes: ByteArray
 ) {
     fun getKeyDerivationFunction() : IKDF {
-        return KDFFactory.fromVariantDictionary(fields[HeaderConstants.HEADER_FIELD_ID_KDF] as VariantDictionary)
+        return KDFFactory.fromVariantDictionary(fields[dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_KDF] as VariantDictionary)
     }
 
     fun checkHeaderEncryptedHash(masterPassword: ByteArray) {
@@ -29,7 +29,7 @@ data class KdbxHeader(
         val kdf = getKeyDerivationFunction()
         val transformedKey = kdf.derive(compositeKey)
 
-        val seed = (fields[HeaderConstants.HEADER_FIELD_ID_MASTER_SEED] ?: throw MasterSeedNotFoundException()) as ByteArray
+        val seed = (fields[dev.vicart.kteepass.constant.HeaderConstants.HEADER_FIELD_ID_MASTER_SEED] ?: throw MasterSeedNotFoundException()) as ByteArray
 
         val hmacBaseKey = (seed + transformedKey + 0x01).sha512()
 
