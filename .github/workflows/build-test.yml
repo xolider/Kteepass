@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
-    name: 'Building for target ${{ matrix.os }}'
+    name: 'Building and test for target ${{ matrix.os }}'
     runs-on: '${{ matrix.os }}'
     steps:
       - uses: actions/checkout@v4
@@ -18,3 +18,5 @@ jobs:
         name: 'Make ./gradlew executable'
       - run: ./gradlew --no-daemon publishToMavenLocal -D"maven.user=${{ secrets.MAVEN_USER }}" -D"maven.password=${{ secrets.MAVEN_PASSWORD }}"
         name: Build libraries
+      - run: ./gradlew --no-daemon test
+        name: Run tests
