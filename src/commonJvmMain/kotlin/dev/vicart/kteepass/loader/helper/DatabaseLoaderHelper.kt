@@ -2,6 +2,7 @@ package dev.vicart.kteepass.loader.helper
 
 import dev.vicart.kteepass.constant.HeaderConstants
 import dev.vicart.kteepass.exception.*
+import dev.vicart.kteepass.loader.helper.model.BlockStream
 import dev.vicart.kteepass.loader.helper.model.VariantDictionary
 import dev.vicart.kteepass.utils.toUint
 import java.nio.ByteBuffer
@@ -33,6 +34,21 @@ class DatabaseLoaderHelper(bytes: ByteArray) {
         buffer.get(this, 0, this.size)
         this
     }
+
+    val blocks: Array<BlockStream> = buildList {
+        var index = 0
+        var blockSize: Int
+        do {
+            val hmac = ByteArray(32)
+            buffer.get(hmac, 0, hmac.size)
+            val blockBytePos = buffer.position()
+            blockSize = buffer.getInt()
+
+            val block = ByteArray(blockSize)
+            buffer.get(block, 0, block.size)
+            add(index++, BlockStream(hmac, blockSize, block, bytes.sliceArray(blockBytePos until buffer.position())))
+        } while (blockSize != 0)
+    }.toTypedArray()
 
     private fun headerFieldExtractor(byteId: Byte) : Any {
         val size = buffer.getInt()

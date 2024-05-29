@@ -23,16 +23,7 @@ data class KdbxHeader(
         return KDFFactory.fromVariantDictionary(fields[HeaderConstants.HEADER_FIELD_ID_KDF] as VariantDictionary)
     }
 
-    fun checkHeaderEncryptedHash(masterPassword: ByteArray) {
-        val compositeKey = masterPassword.sha256()
-
-        val kdf = getKeyDerivationFunction()
-        val transformedKey = kdf.derive(compositeKey)
-
-        val seed = (fields[HeaderConstants.HEADER_FIELD_ID_MASTER_SEED] ?: throw MasterSeedNotFoundException()) as ByteArray
-
-        val hmacBaseKey = (seed + transformedKey + 0x01).sha512()
-
+    fun checkHeaderEncryptedHash(hmacBaseKey: ByteArray) {
         val hmacSha256 = HMacDecrypter.decrypt(0xFFFFFFFFFFFFFFFFuL, hmacBaseKey, bytes)
 
         if(!hmacSha256.contentEquals(encryptedHash)) {

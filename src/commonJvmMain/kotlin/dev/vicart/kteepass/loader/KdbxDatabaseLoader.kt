@@ -53,7 +53,8 @@ class KdbxDatabaseLoader private constructor(private val helper: DatabaseLoaderH
         checkHeader(header)
 
         val database = KdbxDatabase(
-            header
+            header,
+            helper.blocks
         )
 
         return KdbxLoadingResult(

@@ -7,5 +7,5 @@ import java.io.File
 fun main() {
     val database = KdbxDatabaseLoader.from(File("/home/clement/Documents/Database.kdbx")).load().database
 
-    database.unlock(PasswordKey("test"))
+    database.unlock(PasswordKey("XoliderClem500_@"))
 }

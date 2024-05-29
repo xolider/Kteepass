@@ -15,4 +15,4 @@ fun ByteArray.toInt() : Int = ByteBuffer.wrap(this).order(ByteOrder.LITTLE_ENDIA
 fun ByteArray.sha256() : ByteArray = MessageDigest.getInstance("SHA-256").digest(this)
 fun ByteArray.sha512() : ByteArray = MessageDigest.getInstance("SHA-512").digest(this)
 
-fun ULong.encodeToByteArray() : ByteArray = ByteBuffer.allocate(8).putLong(this.toLong()).array()
+fun ULong.encodeToByteArray() : ByteArray = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(this.toLong()).array()
