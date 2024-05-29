@@ -1,4 +1,5 @@
 on: { pull_request: }
+name: Build & Tests
 
 jobs:
   build:
