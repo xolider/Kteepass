@@ -15,7 +15,14 @@ format and taking advantage of all of its features and possibilities. It will al
 out-of-the-box like loading databases from FTP, HTTP, WebDAV or Cloud providers.
 
 The currently available features are:
-* /
+* Reading, parsing and decrypting KDBX file (ver 4.x)
+
+Features that are in progress:
+* Implementing AES and Argon2id KDF
+* Implementing ChaCha20 decryption
+* Implementing [process memory protection](https://keepass.info/help/base/security.html#secmemprot)
+* KDBX file saving
+* Database initialization
 
 ## Multiplatform
 
