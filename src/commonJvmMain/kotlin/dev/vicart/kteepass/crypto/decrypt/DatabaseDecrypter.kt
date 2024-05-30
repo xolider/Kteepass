@@ -15,11 +15,23 @@ import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.util.zip.GZIPInputStream
 
-class DatabaseDecrypter(private val header: KdbxHeader, private val blocks: Array<BlockStream>, private val key: IKey) {
+/**
+ * Class used for decrypting the database
+ *
+ * @param header The [KDBX Header][KdbxHeader] containing useful information about encryption
+ * @param blocks Array of [block stream][BlockStream] to decrypt, optionally decompress and merge
+ * @param key The [master key][IKey] provided to decrypt the database
+ */
+class DatabaseDecrypter(private val header: KdbxHeader, private val blocks: Array<BlockStream>, private val keys: Array<out IKey>) {
 
-    private val transformedKey = header.kdf.derive(key.hash().sha256())
+    private val compositeKey = keys.map(IKey::encode).reduce(ByteArray::plus).sha256()
+    private val transformedKey = header.kdf.derive(compositeKey)
     private val hmacBaseKey = (header.masterSeed + transformedKey + 0x01).sha512()
 
+    /**
+     * Process the decryption and decompression of the database
+     * @return The entire decrypted database (but not decrypted passwords)
+     */
     fun getDecryptedDatabase() : KdbxDatabase {
         val mergedBlocks = blocks.mapIndexed { index, block ->
             checkAndDecryptBlock(index, block)

@@ -12,6 +12,7 @@ import dev.vicart.kteepass.loader.provider.KdbxFileProvider
 import dev.vicart.kteepass.model.KdbxDatabase
 import dev.vicart.kteepass.model.KdbxHeader
 import dev.vicart.kteepass.model.KdbxVersion
+import dev.vicart.kteepass.utils.sha256
 import dev.vicart.kteepass.utils.toDecimalInt
 import java.io.File
 import java.io.InputStream
@@ -37,13 +38,13 @@ class KdbxDatabaseLoader private constructor(private val bytes: ByteArray) {
         fun from(provider: KdbxFileProvider): KdbxDatabaseLoader = from(provider.get())
     }
 
-    fun open(key: IKey) : KdbxDatabase {
+    fun open(vararg keys: IKey) : KdbxDatabase {
         val helper = DatabaseLoaderHelper(bytes)
         val header = KdbxHeader(helper)
 
         checkHeader(header)
 
-        val decrypter = DatabaseDecrypter(header, helper.blocks, key)
+        val decrypter = DatabaseDecrypter(header, helper.blocks, keys)
         return decrypter.getDecryptedDatabase()
     }
 
@@ -61,7 +62,7 @@ class KdbxDatabaseLoader private constructor(private val bytes: ByteArray) {
         if(!header.endHeader.contentEquals(HeaderConstants.headerEndValue)) {
             throw WrongHeaderEndException()
         }
-        val computedHeaderHash = MessageDigest.getInstance("SHA-256").digest(header.headerBytes)
+        val computedHeaderHash = header.headerBytes.sha256()
         if(!computedHeaderHash.contentEquals(header.sha256Hash)) {
             throw DatabaseCorruptedException()
         }

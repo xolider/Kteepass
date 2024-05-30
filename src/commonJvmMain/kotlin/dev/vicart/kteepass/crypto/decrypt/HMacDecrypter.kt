@@ -7,6 +7,13 @@ import javax.crypto.spec.SecretKeySpec
 
 object HMacDecrypter {
 
+    /**
+     * Process the HMAC-SHA-256 hash. More information at [Computation of keys](https://keepass.info/help/kb/kdbx.html#keys)
+     * @param blockIndex The block index (or 0xFFFFFFFFFFFFFFFF for KDBX header)
+     * @param hmacBaseKey The base key to use for HMAC computation
+     * @param block the bytes to compute the HMAC on
+     * @return The computed HMAC-SHA-256
+     */
     fun decrypt(blockIndex: ULong, hmacBaseKey: ByteArray, block: ByteArray) : ByteArray {
         val hmacKey = (blockIndex.encodeToByteArray() + hmacBaseKey).sha512()
         val mac = Mac.getInstance("HmacSHA256")
