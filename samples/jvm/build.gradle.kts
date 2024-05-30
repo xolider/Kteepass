@@ -1,14 +1,21 @@
 plugins {
-    id("application")
     kotlin("jvm")
+    alias(libs.plugins.composeDesktop)
+    alias(libs.plugins.kotlinCompose)
 }
 
 dependencies {
     implementation(rootProject)
+    implementation(compose.foundation)
+    implementation(compose.runtime)
+    implementation(compose.ui)
+    implementation(compose.desktop.currentOs)
 }
 
-application {
-    mainClass = "dev.vicart.kteepass.sample.jvm.MainKt"
+compose.desktop {
+    application {
+        mainClass = "dev.vicart.kteepass.sample.jvm.MainKt"
+    }
 }
 
 java {

@@ -5,7 +5,7 @@ import dev.vicart.kteepass.utils.sha512
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-object HMacDecrypter {
+object HMacHasher {
 
     /**
      * Process the HMAC-SHA-256 hash. More information at [Computation of keys](https://keepass.info/help/kb/kdbx.html#keys)
@@ -14,7 +14,7 @@ object HMacDecrypter {
      * @param block the bytes to compute the HMAC on
      * @return The computed HMAC-SHA-256
      */
-    fun decrypt(blockIndex: ULong, hmacBaseKey: ByteArray, block: ByteArray) : ByteArray {
+    fun hash(blockIndex: ULong, hmacBaseKey: ByteArray, block: ByteArray) : ByteArray {
         val hmacKey = (blockIndex.encodeToByteArray() + hmacBaseKey).sha512()
         val mac = Mac.getInstance("HmacSHA256")
         val secretKey = SecretKeySpec(hmacKey, "SHA-512")

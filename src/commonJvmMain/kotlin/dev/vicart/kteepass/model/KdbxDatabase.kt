@@ -1,21 +1,25 @@
 package dev.vicart.kteepass.model
 
-import dev.vicart.kteepass.constant.HeaderConstants
-import dev.vicart.kteepass.crypto.PasswordKey
-import dev.vicart.kteepass.crypto.decrypt.HMacDecrypter
-import dev.vicart.kteepass.exception.DatabaseDecryptionException
-import dev.vicart.kteepass.exception.MasterSeedNotFoundException
-import dev.vicart.kteepass.loader.helper.model.BlockStream
-import dev.vicart.kteepass.utils.encodeToByteArray
-import dev.vicart.kteepass.utils.sha256
-import dev.vicart.kteepass.utils.sha512
+import dev.vicart.kteepass.exception.DatabaseClosedException
 
-data class KdbxDatabase(
-    val header: KdbxHeader,
-    val rootGroup: DatabaseGroup
+class KdbxDatabase(
+    private val pHeader: KdbxHeader?,
+    private var pRootGroup: DatabaseGroup?
 ) {
+    val rootGroup get() = pRootGroup ?: throw DatabaseClosedException()
+    val header get() = pHeader ?: throw DatabaseClosedException()
+
     fun getEntries() : List<DatabaseEntry> {
         return recursiveItemChildren(rootGroup).filterIsInstance<DatabaseEntry>()
+    }
+
+    /**
+     * Remove all references to the database header and payload, and then run garbage collector to ensure
+     * data are freed from memory
+     */
+    fun closeDatabase() {
+        pRootGroup = null
+        System.gc()
     }
 
     private fun recursiveItemChildren(item: AbstractDatabaseItem) : List<AbstractDatabaseItem> {

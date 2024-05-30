@@ -13,4 +13,9 @@ object HeaderConstants {
     const val HEADER_FIELD_ID_KDF: Byte = 11
     const val HEADER_FIELD_ID_PUBLIC_CUSTOM_DATA: Byte = 12
     const val HEADER_FIELD_ID_END: Byte = 0
+
+    const val INNER_HEADER_FIELD_ID_END: Byte = 0
+    const val INNER_HEADER_FIELD_ID_ENCRYPTION_ALGORITHM: Byte = 1
+    const val INNER_HEADER_FIELD_ID_ENCRYPTION_KEY: Byte = 2
+    const val INNER_HEADER_FIELD_ID_BINARY_CONTENT: Byte = 3
 }

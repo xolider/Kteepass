@@ -21,8 +21,6 @@ import java.security.MessageDigest
 
 class KdbxDatabaseLoader private constructor(private val bytes: ByteArray) {
 
-    private val warnings = mutableListOf<LoadingWarning>()
-
     companion object {
         fun from(from: File) : KdbxDatabaseLoader = from(from.inputStream())
 
@@ -55,9 +53,6 @@ class KdbxDatabaseLoader private constructor(private val bytes: ByteArray) {
         }
         if(header.version.major > KteepassConstants.MAJOR_SUPPORTED_KDBX) {
             throw KdbxVersionNotSupportedException()
-        }
-        if(header.version.minor > KteepassConstants.MINOR_SUPPORTED_KDBX) {
-            warnings.add(LoadingWarning.HEADER_MINOR_VERSION_NOT_SUPPORTED)
         }
         if(!header.endHeader.contentEquals(HeaderConstants.headerEndValue)) {
             throw WrongHeaderEndException()

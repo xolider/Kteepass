@@ -2,15 +2,11 @@ package dev.vicart.kteepass.model
 
 import dev.vicart.kteepass.constant.HeaderConstants
 import dev.vicart.kteepass.crypto.enums.EncryptionAlgorithm
-import dev.vicart.kteepass.crypto.decrypt.HMacDecrypter
 import dev.vicart.kteepass.crypto.enums.CompressionAlgorithm
-import dev.vicart.kteepass.exception.DatabaseDecryptionException
 import dev.vicart.kteepass.loader.helper.DatabaseLoaderHelper
 import dev.vicart.kteepass.loader.helper.model.VariantDictionary
-import dev.vicart.kteepass.loader.helper.model.kdf.IKDF
 import dev.vicart.kteepass.loader.helper.model.kdf.KDFFactory
 import dev.vicart.kteepass.utils.toDecimalInt
-import java.util.UUID
 
 class KdbxHeader(helper: DatabaseLoaderHelper) {
 

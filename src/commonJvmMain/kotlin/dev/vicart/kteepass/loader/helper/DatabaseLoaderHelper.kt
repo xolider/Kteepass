@@ -3,14 +3,12 @@ package dev.vicart.kteepass.loader.helper
 import dev.vicart.kteepass.constant.HeaderConstants
 import dev.vicart.kteepass.constant.KteepassConstants
 import dev.vicart.kteepass.exception.*
-import dev.vicart.kteepass.loader.LoadingWarning
 import dev.vicart.kteepass.loader.helper.model.BlockStream
 import dev.vicart.kteepass.loader.helper.model.VariantDictionary
 import dev.vicart.kteepass.utils.toDecimalInt
 import dev.vicart.kteepass.utils.toUint
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.util.UUID
 
 class DatabaseLoaderHelper(bytes: ByteArray) {
 
